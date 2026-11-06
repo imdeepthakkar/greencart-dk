@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenCart DK - Anti Food Waste Dashboard</title>
+    <!-- Google Fonts: Outfit and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background Animated Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header glass-card">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+                <h1>GreenCart <span class="accent-text">DK</span></h1>
+            </div>
+            <div class="search-area">
+                <form id="zip-form" class="search-bar-container">
+                    <i class="fa-solid fa-location-dot location-icon"></i>
+                    <input type="text" id="zip-input" placeholder="Indtast postnummer (f.eks. 2730)..." maxlength="4" value="2730">
+                    <button type="submit" class="search-btn">
+                        <span>Søg</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="header-badges">
+                <div class="lang-selector-container">
+                    <button class="lang-btn active" id="lang-da" data-lang="da">
+                        <img src="https://flagcdn.com/w20/dk.png" alt="Danish Flag" class="flag-img">
+                        <span>DK</span>
+                    </button>
+                    <button class="lang-btn" id="lang-en" data-lang="en">
+                        <img src="https://flagcdn.com/w20/gb.png" alt="English Flag" class="flag-img">
+                        <span>EN</span>
+                    </button>
+                </div>
+                <div class="api-badge" id="api-status-badge">
+                    <span class="dot pulse-green"></span>
+                    <span id="api-status-text">Salling API Live</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="app-body">
+            <!-- LEFT PANEL: Stores list -->
+            <section class="panel stores-panel glass-card">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-store"></i> Supermarkeder</h2>
+                    <span class="badge" id="stores-count">0 fundet</span>
+                </div>
+                
+                <!-- Filters -->
+                <div class="brand-filters">
+                    <button class="filter-chip active" data-brand="all">Alle</button>
+                    <button class="filter-chip" data-brand="netto"><span class="brand-dot netto-dot"></span>Netto</button>
+                    <button class="filter-chip" data-brand="foetex"><span class="brand-dot fotex-dot"></span>føtex</button>
+                    <button class="filter-chip" data-brand="bilka"><span class="brand-dot bilka-dot"></span>Bilka</button>
+                </div>
+
+                <div class="stores-list-container" id="stores-list">
+                    <!-- Loaded dynamically via app.js -->
+                    <div class="loading-placeholder">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <p>Henter butikker...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CENTER PANEL: Clearance items -->
+            <section class="panel clearances-panel glass-card">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-tags"></i> Madspild Tilbud</h2>
+                    <span class="badge accent-badge" id="clearance-count">Vælg en butik</span>
+                </div>
+
+                <!-- Active Store Summary -->
+                <div class="active-store-card" id="active-store-info" style="display: none;">
+                    <div class="store-details">
+                        <h3 id="active-store-name">Netto Aarhus</h3>
+                        <p id="active-store-address"><i class="fa-solid fa-map-pin"></i> Vestergade 12, 8000 Aarhus</p>
+                    </div>
+                    <div class="store-brand-badge" id="active-store-brand">Netto</div>
+                </div>
+
+                <!-- Food Preference Filters -->
+                <div class="food-filters" id="food-preference-filters" style="display: none;">
+                    <button class="food-filter-chip active" data-pref="all">Alle</button>
+                    <button class="food-filter-chip" data-pref="vegan"><i class="fa-solid fa-seedling"></i> Vegansk</button>
+                    <button class="food-filter-chip" data-pref="veg"><i class="fa-solid fa-carrot"></i> Vegetarisk</button>
+                    <button class="food-filter-chip" data-pref="non-veg"><i class="fa-solid fa-drumstick-bite"></i> Kød & Fisk</button>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="clearances-grid-container" id="clearances-grid">
+                    <div class="grid-empty-state">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <h3>Ingen butik valgt</h3>
+                        <p>Vælg en butik fra listen til venstre for at se deres aktuelle madspildsvarer og rabatter.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: AI Chatbot -->
+            <section class="panel chatbot-panel glass-card">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-robot"></i> GreenCart Assistent</h2>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages-container" id="chat-messages">
+                    <div class="message agent-message">
+                        <div class="msg-bubble">
+                            Hej! Jeg er din <strong>GreenCart Assistent</strong>.<br><br>
+                            Spørg mig om tilbud eller find butikker. Prøv f.eks. at skrive:
+                            <ul>
+                                <li><a href="#" class="chat-suggest-link">Find madspild i 2730</a></li>
+                                <li><a href="#" class="chat-suggest-link">Har Netto nogle tilbud?</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Replies -->
+                <div class="quick-replies">
+                    <button class="reply-chip">Madspild i 8000</button>
+                    <button class="reply-chip">Netto tilbud</button>
+                    <button class="reply-chip">føtex butikker</button>
+                </div>
+
+                <!-- Chat Input -->
+                <form id="chat-form" class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Spørg om madspild eller butikker..." autocomplete="off">
+                    <button type="submit" class="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Script -->
+    <script src="app.js"></script>
+</body>
+</html>
